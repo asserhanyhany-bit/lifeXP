@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LifeXP — Level up your life</title>
+<style>
+:root{color-scheme:dark;--bg:#07110c;--side:#09150e;--panel:#0f1d13;--panel2:#14231a;--border:#294632;--text:#e7f0e8;--muted:#91a094;--accent:#80d796;--accent2:#287641;--font:Arial,sans-serif}
+:root[data-mode="neon"]{--bg:#020403;--side:#050806;--panel:#080d09;--panel2:#0b120d}
+:root[data-mode="white"]{color-scheme:light;--bg:#f2f6f2;--side:#fff;--panel:#fff;--panel2:#f7faf7;--border:#dce6dd;--text:#243128;--muted:#68766c}
+:root[data-palette="ocean"]{--accent:#74d5d6;--accent2:#237b7a}
+:root[data-palette="violet"]{--accent:#b89afa;--accent2:#6544a0}
+:root[data-palette="ember"]{--accent:#ffb477;--accent2:#a95429}
+:root[data-palette="rose"]{--accent:#ed9cbe;--accent2:#a2436d}
+:root[data-palette="slate"]{--accent:#a8cbd8;--accent2:#4e7f92}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px var(--font);min-width:320px}
+button,input,select{font:inherit}
+button{cursor:pointer;color:inherit}
+.layout{min-height:100vh}
+.sidebar{position:fixed;inset:0 auto 0 0;width:235px;padding:24px 16px;background:var(--side);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:5}
+.brand{font-size:22px;font-weight:800;color:var(--accent);padding:4px 10px 30px}
+.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:2px;margin-top:4px}
+.nav-label{color:var(--muted);font-size:10px;letter-spacing:1.5px;margin:18px 10px 8px}
+.nav button,.side-bottom button{width:100%;border:0;background:none;text-align:left;padding:12px;border-radius:9px;color:var(--muted);margin:2px 0}
+.nav button:hover,.nav button.active,.side-bottom button:hover{background:color-mix(in srgb,var(--accent) 13%,transparent);color:var(--accent)}
+.side-bottom{margin-top:auto}
+.main{margin-left:235px;min-height:100vh}
+.topbar{height:68px;position:sticky;top:0;z-index:4;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 34px}
+.topbar strong{font-size:13px}
+.top-actions{display:flex;align-items:center;gap:10px}
+.top-actions button,.menu-button{border:1px solid var(--border);border-radius:8px;background:var(--panel);padding:8px 11px}
+.menu-button{display:none}
+.content{max-width:1450px;margin:auto;padding:30px 34px}
+.view[hidden]{display:none!important}
+.page-title{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:22px}
+.eyebrow{color:var(--accent);font-size:10px;letter-spacing:1.4px;font-weight:700}
+h1,h2,h3,p{margin-top:0}
+h1{font-size:28px;margin:7px 0}
+.subtitle{color:var(--muted);font-size:13px;margin:0}
+.btn{border:1px solid transparent;border-radius:8px;padding:10px 14px;background:linear-gradient(120deg,var(--accent),var(--accent2));color:#fff;font-weight:700}
+.btn.secondary{background:var(--panel2);color:var(--text);border-color:var(--border)}
+.btn.quiet{background:transparent;color:var(--accent);border-color:var(--border)}
+.card{background:linear-gradient(145deg,var(--panel2),var(--panel));border:1px solid var(--border);border-radius:13px;padding:18px;transition:transform .18s,box-shadow .18s}
+:root[data-pop="on"] .card:hover{transform:translateY(-3px);box-shadow:0 12px 30px color-mix(in srgb,var(--accent) 17%,transparent)}
+:root[data-mode="neon"] .card,:root[data-mode="neon"] .hero{box-shadow:0 0 20px color-mix(in srgb,var(--accent) 16%,transparent),inset 0 0 18px color-mix(in srgb,var(--accent) 5%,transparent)}
+.hero{position:relative;overflow:hidden;padding:28px;border:1px solid var(--border);border-radius:16px;background:radial-gradient(ellipse at 85% 20%,color-mix(in srgb,var(--accent) 20%,transparent),transparent 45%),linear-gradient(120deg,var(--panel2),var(--panel));margin-bottom:15px}
+.hero h2{font:500 32px Georgia,serif;margin:12px 0}
+.hero p{color:var(--muted)}
+.xp-line{max-width:520px}
+.xp-meta{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin:18px 0 7px}
+.track,.mini-track{height:8px;background:color-mix(in srgb,var(--muted) 20%,transparent);border-radius:9px;overflow:hidden}
+.track i,.mini-track i{display:block;height:100%;background:var(--accent);border-radius:inherit;transition:width .3s}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}
+.stat span{display:block;color:var(--muted);font-size:10px;letter-spacing:1px}
+.stat strong{display:block;font-size:24px;margin:9px 0 3px}
+.stat small{color:var(--muted)}
+.grid{display:grid;grid-template-columns:1.1fr .9fr;gap:14px}
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.card-head h3{margin:0;font-size:15px}
+.row{display:flex;align-items:center;gap:11px;border-top:1px solid var(--border);padding:12px 0}
+.row:first-child{border-top:0}
+.row-main{min-width:0;flex:1}
+.row-main strong{display:block}
+.row-main small{color:var(--muted)}
+.row-actions{display:flex;align-items:center;gap:5px}
+.row-actions button,.check{border:1px solid var(--border);border-radius:7px;background:var(--panel2);padding:7px}
+.check.done{color:var(--accent);border-color:var(--accent)}
+.xp{color:var(--accent);font-size:12px;white-space:nowrap}
+.empty{padding:24px;text-align:center;color:var(--muted)}
+.progress-copy{color:var(--muted);margin:8px 0}
+.habit-week{display:flex;gap:5px;margin-top:8px}
+.habit-week i{width:11px;height:11px;border-radius:50%;background:color-mix(in srgb,var(--muted) 22%,transparent)}
+.habit-week i.done{background:var(--accent)}
+.welcome{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:14px}
+.welcome p{color:var(--muted);margin:5px 0 0}
+.list-toolbar{display:flex;gap:9px;margin-bottom:12px}
+input,select{background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:7px;padding:10px}
+dialog{width:min(520px,calc(100% - 24px));border:1px solid var(--border);border-radius:14px;background:var(--panel);color:var(--text);padding:22px}
+dialog::backdrop{background:#000a;backdrop-filter:blur(4px)}
+dialog h2{font:500 24px Georgia,serif}
+.form{display:grid;gap:12px}
+.form label{display:grid;gap:6px;color:var(--muted);font-size:12px}
+.form-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:8px}
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.setting{padding:12px;border:1px solid var(--border);border-radius:9px}
+.setting label{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.setting select{max-width:190px}
+.toast{position:fixed;right:22px;bottom:22px;background:var(--panel2);border:1px solid var(--border);border-radius:9px;padding:12px 16px;box-shadow:0 8px 25px #0005;z-index:10}
+@media(max-width:900px){.stats{grid-template-columns:repeat(2,1fr)}.content{padding:23px 18px}.topbar{padding:0 18px}}
+@media(max-width:650px){.sidebar{transform:translateX(-105%);transition:transform .2s;width:260px;box-shadow:10px 0 35px #0008}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.menu-button{display:inline-block}.topbar{height:58px;padding:0 12px}.content{padding:18px 12px}.page-title{align-items:flex-start}.page-title h1{font-size:22px}.hero{padding:20px}.hero h2{font-size:27px}.grid{grid-template-columns:1fr}.welcome{align-items:flex-start;flex-direction:column}.settings-grid{grid-template-columns:1fr}.top-actions{gap:5px}.top-actions button{padding:7px}}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="brand">✦ LifeXP<small>YOUR LIFE, LEVELED UP</small></div>
+  <div class="nav-label">JOURNEY</div>
+  <nav class="nav">
+    <button data-view="overview" class="active">◈ &nbsp; Overview</button>
+    <button data-view="quests">⚔ &nbsp; Quests</button>
+    <button data-view="habits">◉ &nbsp; Habits</button>
+    <button data-view="analytics">↗ &nbsp; Analytics</button>
+    <button data-action="guide">▤ &nbsp; Guide</button>
+    <button data-action="settings">⚙ &nbsp; Settings</button>
+  </nav>
+  <div class="side-bottom">
+    <button data-action="profile">♙ &nbsp; Edit profile</button>
+    <button data-action="reset">↻ &nbsp; Reset progress</button>
+  </div>
+</aside>
+
+<main class="main">
+<header class="topbar">
+  <div><button class="menu-button" data-action="menu">☰</button> &nbsp; <strong id="breadcrumb">Overview</strong></div>
+  <div class="top-actions">
+    <button data-action="sound" id="sound-button">◖ Sound off</button>
+    <button data-action="profile" id="top-profile">🧙 Adventurer · Lvl 1</button>
+  </div>
+</header>
+
+<div class="content">
+<section class="view" id="view-overview">
+  <div class="page-title"><div><div class="eyebrow" id="today-label"></div><h1 id="greeting">Welcome, Adventurer</h1><p class="subtitle">Small steps become legendary stories.</p></div><button class="btn" data-action="new-quest">＋ New quest</button></div>
+  <div class="welcome card" id="welcome-card"><div><div class="eyebrow">A FRESH START</div><h3>Choose your first small win</h3><p>Create a quest or habit to begin earning XP.</p></div><button class="btn secondary" data-action="guide">How it works →</button></div>
+  <section class="hero">
+    <div class="eyebrow" id="rank-title">NEW JOURNEY · LEVEL 01</div>
+    <h2>Every day is a chance to level up.</h2>
+    <p>Build a rhythm that fits your real life.</p>
+    <div class="xp-line"><div class="xp-meta"><span>EXPERIENCE</span><strong id="xp-label">0 / 500 XP</strong></div><div class="track"><i id="xp-bar" style="width:0%"></i></div><div class="xp-meta"><span id="level-label">LEVEL 01</span><span id="xp-remaining">500 XP to next level</span></div></div>
+  </section>
+  <div class="stats">
+    <div class="card stat"><span>TOTAL EXPERIENCE</span><strong id="stat-xp">0</strong><small>XP earned</small></div>
+    <div class="card stat"><span>CURRENT STREAK</span><strong id="stat-streak">0 days</strong><small>Best active habit</small></div>
+    <div class="card stat"><span>TODAY'S PROGRESS</span><strong id="stat-progress">0%</strong><small id="stat-actions">0 of 0 actions</small></div>
+    <div class="card stat"><span>QUESTS CLEARED</span><strong id="stat-completed">0</strong><small>Across your journey</small></div>
+  </div>
+  <div class="grid">
+    <section class="card"><div class="card-head"><h3>Today's quests</h3><button class="btn quiet" data-view="quests">View all →</button></div><div id="today-quests"></div><button class="btn secondary" data-action="new-quest">＋ Add a quest</button></section>
+    <section class="card"><div class="card-head"><h3>Daily rhythm</h3><button class="btn quiet" data-view="habits">Manage →</button></div><h2 id="daily-percent">0%</h2><p class="progress-copy" id="daily-copy">Add a quest or habit to shape today.</p><div id="today-habits"></div><button class="btn secondary" data-action="new-habit">＋ Add a habit</button></section>
+    <section class="card"><div class="card-head"><h3>Daily challenge</h3><span class="xp">+50 XP</span></div><p>Complete 3 quests today.</p><div class="mini-track"><i id="challenge-bar" style="width:0%"></i></div><p class="progress-copy" id="challenge-copy">0 / 3 quests</p><button class="btn secondary" id="challenge-button" data-action="challenge">Keep going</button></section>
+    <section class="card"><div class="card-head"><h3>Daily reward</h3><span class="xp">+25 XP</span></div><p class="progress-copy">Complete all today's quests and habits.</p><button class="btn secondary" id="reward-button" data-action="reward" disabled>0% complete</button></section>
+  </div>
+</section>
+
+<section class="view" id="view-quests" hidden>
+  <div class="page-title"><div><div class="eyebrow">YOUR ADVENTURE LOG</div><h1>Quest board</h1><p class="subtitle">Turn your next steps into progress you can see.</p></div><button class="btn" data-action="new-quest">＋ Create quest</button></div>
+  <div class="list-toolbar"><input id="quest-search" placeholder="Search your quests…" aria-label="Search quests"><select id="quest-filter" aria-label="Filter quests"><option>All quests</option><option>Active</option><option>Completed</option></select></div>
+  <section class="card"><div id="all-quests"></div></section>
+</section>
+
+<section class="view" id="view-habits" hidden>
+  <div class="page-title"><div><div class="eyebrow">YOUR DAILY RHYTHM</div><h1>Habits that stick</h1><p class="subtitle">Consistency is a superpower. Build it one check-in at a time.</p></div><button class="btn" data-action="new-habit">＋ Add habit</button></div>
+  <section class="card"><div id="all-habits"></div></section>
+</section>
+
+<section class="view" id="view-analytics" hidden>
+  <div class="page-title"><div><div class="eyebrow">YOUR PROGRESS</div><h1>Journey analytics</h1><p class="subtitle">A simple look at your recent XP and milestones.</p></div></div>
+  <div class="stats"><div class="card stat"><span>TOTAL XP</span><strong id="analytics-xp">0</strong></div><div class="card stat"><span>LEVEL</span><strong id="analytics-level">1</strong></div><div class="card stat"><span>QUESTS DONE</span><strong id="analytics-quests">0</strong></div><div class="card stat"><span>HABITS</span><strong id="analytics-habits">0</strong></div></div>
+  <section class="card"><h3>Recent achievements</h3><div id="achievements"></div></section>
+</section>
+</div>
+</main>
+</div>
+
+<dialog id="quest-dialog">
+<form class="form" id="quest-form">
+<h2 id="quest-dialog-title">Create a quest</h2>
+<label>Quest name<input name="title" required maxlength="70" placeholder="e.g. Study for 30 minutes"></label>
+<label>Category<select name="category"><option>Academic</option><option>Fitness</option><option>Personal Development</option><option>Productivity</option></select></label>
+<label>Difficulty<select name="difficulty"><option>Easy</option><option>Medium</option><option>Hard</option><option>Legendary</option></select></label>
+<label>Deadline<input name="dueDate" type="date"></label>
+<div class="progress-copy" id="quest-reward">Completing this quest earns 10 XP.</div>
+<div class="form-actions"><button type="button" class="btn secondary" data-action="close-quest">Cancel</button><button class="btn">Save quest</button></div>
+</form>
+</dialog>
+
+<dialog id="habit-dialog">
+<form class="form" id="habit-form">
+<h2>Add a habit</h2>
+<label>Habit name<input name="name" required maxlength="45" placeholder="e.g. Stretch for 5 minutes"></label>
+<label>Choose an icon<select name="icon"><option>🌱</option><option>📖</option><option>🏃</option><option>💧</option><option>🧘</option><option>🎯</option><option>✨</option></select></label>
+<div class="progress-copy">The first check-in each day earns 10 XP.</div>
+<div class="form-actions"><button type="button" class="btn secondary" data-action="close-habit">Cancel</button><button class="btn">Save habit</button></div>
+</form>
+</dialog>
+
+<dialog id="guide-dialog">
+<h2>A quick guide to LifeXP</h2>
+<p class="progress-copy">Create quests for things you want to do, and habits for the things you want to repeat.</p>
+<div class="card"><strong>Quest XP</strong><p>Easy 10 · Medium 25 · Hard 50 · Legendary 100 XP</p><strong>Level up</strong><p>Every 500 XP raises your level. Your progress saves in this browser.</p><strong>Daily extras</strong><p>Complete 3 quests for 50 bonus XP. Finish today's actions for a 25 XP reward.</p></div>
+<div class="form-actions"><button class="btn" data-action="close-guide">Got it</button></div>
+</dialog>
+
+<dialog id="settings-dialog">
+<form class="form" id="settings-form">
+<h2>Settings & customization</h2>
+<div class="settings-grid">
+<div class="setting"><label>Color palette<select name="palette"><option value="forest">Forest green</option><option value="ocean">Ocean</option><option value="violet">Midnight violet</option><option value="ember">Ember</option><option value="rose">Rosewood</option><option value="slate">Slate</option></select></label></div>
+<div class="setting"><label>Font<select name="font"><option value="system">System UI</option><option value="arial">Arial</option><option value="verdana">Verdana</option><option value="tahoma">Tahoma</option><option value="trebuchet">Trebuchet MS</option><option value="georgia">Georgia</option><option value="times">Times New Roman</option><option value="courier">Courier New</option><option value="palatino">Palatino Linotype</option><option value="cambria">Cambria</option><option value="segoe">Segoe UI</option></select></label></div>
+<div class="setting"><label>Neon mode<input type="checkbox" name="neon"></label></div>
+<div class="setting"><label>White mode<input type="checkbox" name="white"></label></div>
+<div class="setting"><label>Pop cards on hover<input type="checkbox" name="pop"></label></div>
+<div class="setting"><label>Sound effects<input type="checkbox" name="sound"></label></div>
+</div>
+<h3>Player profile</h3>
+<label class="form">Display name<input name="profileName" maxlength="35"></label>
+<label class="form">Adventurer title<input name="profileTitle" maxlength="35"></label>
+<label class="form">Avatar<select name="avatar"><option>🧙</option><option>🧝</option><option>🧑‍🚀</option><option>🦊</option><option>🐺</option><option>🦉</option><option>🐉</option><option>🧚</option></select></label>
+<div class="form-actions"><button type="button" class="btn secondary" data-action="close-settings">Cancel</button><button class="btn">Save settings</button></div>
+</form>
+</dialog>
+<div id="toast" class="toast" hidden></div>
+
+<script>
+const KEY="lifexp-copy-save-v1", PREF="lifexp-copy-prefs-v1";
+const XP={Easy:10,Medium:25,Hard:50,Legendary:100};
+const fonts={system:'Inter,system-ui,sans-serif',arial:'Arial,sans-serif',verdana:'Verdana,sans-serif',tahoma:'Tahoma,sans-serif',trebuchet:'"Trebuchet MS",sans-serif',georgia:'Georgia,serif',times:'"Times New Roman",serif',courier:'"Courier New",monospace',palatino:'"Palatino Linotype",Palatino,serif',cambria:'Cambria,Georgia,serif',segoe:'"Segoe UI",sans-serif'};
+const $=id=>document.getElementById(id);
+const today=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`};
+const uid=()=>crypto.randomUUID?.()||String(Date.now()+Math.random());
+const fresh=()=>({profile:{name:"Adventurer",title:"New Journey",avatar:"🧙"},xp:0,completedCount:0,quests:[],habits:[],dailyXp:[],claimedChallenge:"",claimedReward:"",sound:false});
+function load(key,fallback){try{return {...fallback(),...JSON.parse(localStorage.getItem(key)||"{}")}}catch{return fallback()}}
+let game=load(KEY,fresh),prefs=load(PREF,()=>({palette:"forest",font:"system",neon:false,white:false,pop:true}));
+let currentView="overview",editingQuest=null,editingHabit=null,toastTimer;
+function save(){localStorage.setItem(KEY,JSON.stringify(game));render()}
+function notify(message){$("toast").textContent=message;$("toast").hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$("toast").hidden=true,2500)}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function level(){return Math.floor(game.xp/500)+1}
+function dailyQuests(){return game.quests.filter(q=>q.dueDate===today()||q.completedAt===today())}
+function streak(logs={}){let n=0,d=new Date();const key=x=>`${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`;if(!logs[key(d)])d.setDate(d.getDate()-1);while(logs[key(d)]){n++;d.setDate(d.getDate()-1);if(n>365)break}return n}
+function award(amount){game.xp+=amount;const row=game.dailyXp.find(x=>x.date===today());if(row)row.xp+=amount;else game.dailyXp.push({date:today(),xp:amount});game.dailyXp=game.dailyXp.slice(-35);if(game.sound){try{const c=new AudioContext(),o=c.createOscillator(),g=c.createGain();o.frequency.value=660;g.gain.value=.04;o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+.15)}catch{}}}
+function applyPrefs(){const r=document.documentElement;r.dataset.mode=prefs.neon?"neon":prefs.white?"white":"dark";r.dataset.palette=prefs.palette||"forest";r.dataset.pop=prefs.pop?"on":"off";r.style.setProperty("--font",fonts[prefs.font]||fonts.system);localStorage.setItem(PREF,JSON.stringify(prefs))}
+function openQuest(q){editingQuest=q?.id||null;const f=$("quest-form");f.reset();f.elements.dueDate.value=q?.dueDate||today();f.elements.title.value=q?.title||"";f.elements.category.value=q?.category||"Academic";f.elements.difficulty.value=q?.difficulty||"Easy";$("quest-dialog-title").textContent=q?"Edit quest":"Create a quest";$("quest-reward").textContent=`Completing this quest earns ${XP[f.elements.difficulty.value]} XP.`;$("quest-dialog").showModal()}
+function openHabit(h){editingHabit=h?.id||null;const f=$("habit-form");f.reset();f.elements.name.value=h?.name||"";f.elements.icon.value=h?.icon||"🌱";$("habit-dialog").querySelector("h2").textContent=h?"Edit habit":"Add a habit";$("habit-dialog").showModal()}
+function questRow(q){const done=q.status==="completed";return `<div class="row"><button class="check ${done?"done":""}" data-action="complete" data-id="${esc(q.id)}" ${done?"disabled":""}>${done?"✓":"○"}</button><div class="row-main"><strong>${esc(q.title)}</strong><small>${esc(q.category)} · ${esc(q.difficulty)}${q.dueDate?` · ${esc(q.dueDate)}`:""}</small></div><span class="xp">+${XP[q.difficulty]||10} XP</span><div class="row-actions">${!done?`<button data-action="edit-quest" data-id="${esc(q.id)}" title="Edit">✎</button>`:""}<button data-action="delete-quest" data-id="${esc(q.id)}" title="Delete">×</button></div></div>`}
+function habitRow(h){const done=!!h.logs?.[today()];const marks=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;marks.push(`<i class="${h.logs?.[k]?"done":""}" title="${k}"></i>`)}return `<div class="row"><span style="font-size:22px">${esc(h.icon||"🌱")}</span><div class="row-main"><strong>${esc(h.name)}</strong><small>${streak(h.logs)} day streak · last 7 days</small><div class="habit-week">${marks.join("")}</div></div><div class="row-actions"><button class="check ${done?"done":""}" data-action="toggle-habit" data-id="${esc(h.id)}">${done?"✓":"Check in"}</button><button data-action="edit-habit" data-id="${esc(h.id)}" title="Edit">✎</button><button data-action="delete-habit" data-id="${esc(h.id)}" title="Delete">×</button></div></div>`}
+function setList(id,items,empty){$(id).innerHTML=items.length?items.map(x=>id.includes("habit")?habitRow(x):questRow(x)).join(""):`<div class="empty">${empty}</div>`}
+function render(){applyPrefs();const lvl=level(),todayQs=dailyQuests(),doneQs=todayQs.filter(q=>q.status==="completed").length,habitsDone=game.habits.filter(h=>h.logs?.[today()]).length,total=todayQs.length+game.habits.length,percent=total?Math.round((doneQs+habitsDone)*100/total):0,challenge=game.quests.filter(q=>q.completedAt===today()).length;
+$("today-label").textContent=new Date().toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"}).toUpperCase();$("greeting").textContent=`Welcome, ${game.profile.name.split(" ")[0]}`;$("top-profile").textContent=`${game.profile.avatar} ${game.profile.name} · Lvl ${lvl}`;$("sound-button").textContent=game.sound?"◖ Sound on":"◖ Sound off";$("rank-title").textContent=`${game.profile.title} · LEVEL ${String(lvl).padStart(2,"0")}`;$("xp-label").textContent=`${game.xp%500} / 500 XP`;$("xp-bar").style.width=`${game.xp%500/5}%`;$("level-label").textContent=`LEVEL ${String(lvl).padStart(2,"0")}`;$("xp-remaining").textContent=`${500-game.xp%500} XP to next level`;
+$("stat-xp").textContent=game.xp.toLocaleString();$("stat-streak").textContent=`${Math.max(0,...game.habits.map(h=>streak(h.logs)))} days`;$("stat-progress").textContent=`${percent}%`;$("stat-actions").textContent=`${doneQs+habitsDone} of ${total} actions`;$("stat-completed").textContent=game.completedCount.toLocaleString();$("daily-percent").textContent=`${percent}%`;$("daily-copy").textContent=total?`${doneQs+habitsDone} actions complete today`:"Add a quest or habit to shape today.";
+setList("today-quests",todayQs.slice(0,4),"Your quest log is ready. Add one clear next step.");setList("all-quests",game.quests.filter(q=>{const f=$("quest-filter").value,s=$("quest-search").value.toLowerCase();return(f==="All quests"||f===q.status)&&q.title.toLowerCase().includes(s)}),"No quests yet. Create one to get started.");setList("today-habits",game.habits.slice(0,4),"Add a habit to begin your daily rhythm.");setList("all-habits",game.habits,"No habits yet. Add one to start a routine.");
+$("challenge-bar").style.width=`${Math.min(challenge,3)*100/3}%`;$("challenge-copy").textContent=game.claimedChallenge===today()?"Reward claimed":`${Math.min(challenge,3)} / 3 quests`;$("challenge-button").disabled=challenge<3||game.claimedChallenge===today();$("challenge-button").textContent=game.claimedChallenge===today()?"Claimed":challenge<3?"Keep going":"Claim +50 XP";$("reward-button").disabled=!total||percent<100||game.claimedReward===today();$("reward-button").textContent=game.claimedReward===today()?"Claimed":percent===100?"Claim +25 XP":`${percent}% complete`;
+$("analytics-xp").textContent=game.xp.toLocaleString();$("analytics-level").textContent=lvl;$("analytics-quests").textContent=game.completedCount;$("analytics-habits").textContent=game.habits.length;
+const ach=[["First Steps","Complete your first quest",game.completedCount>0],["Rising Star","Reach level 3",lvl>=3],["Unbroken","Build a 7-day habit streak",Math.max(0,...game.habits.map(h=>streak(h.logs)))>=7],["Century Club","Earn 1,000 XP",game.xp>=1000]];$("achievements").innerHTML=ach.map(a=>`<div class="row"><span>${a[2]?"🏆":"🔒"}</span><div class="row-main"><strong>${a[0]}</strong><small>${a[1]}</small></div><span class="xp">${a[2]?"Unlocked":"In progress"}</span></div>`).join("");
+$("welcome-card").hidden=game.quests.length>0||game.habits.length>0;document.querySelectorAll(".view").forEach(v=>v.hidden=v.id!==`view-${currentView}`);$("breadcrumb").textContent=currentView[0].toUpperCase()+currentView.slice(1);document.querySelectorAll("[data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===currentView));
+const sf=$("settings-form");sf.elements.palette.value=prefs.palette||"forest";sf.elements.font.value=prefs.font||"system";sf.elements.neon.checked=!!prefs.neon;sf.elements.white.checked=!!prefs.white;sf.elements.pop.checked=prefs.pop!==false;sf.elements.sound.checked=!!game.sound;sf.elements.profileName.value=game.profile.name;sf.elements.profileTitle.value=game.profile.title;sf.elements.avatar.value=game.profile.avatar}
+document.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;if(b.dataset.view){currentView=b.dataset.view;render();$("sidebar").classList.remove("open");return}const a=b.dataset.action,id=b.dataset.id;if(a==="menu")$("sidebar").classList.toggle("open");if(a==="new-quest")openQuest();if(a==="new-habit")openHabit();if(a==="guide")$("guide-dialog").showModal();if(a==="settings"||a==="profile")$("settings-dialog").showModal();if(a==="close-guide")$("guide-dialog").close();if(a==="close-settings")$("settings-dialog").close();if(a==="close-quest")$("quest-dialog").close();if(a==="close-habit")$("habit-dialog").close();if(a==="sound"){game.sound=!game.sound;save()}if(a==="reset"&&confirm("Reset your profile, quests, habits, and XP?")){game=fresh();save();notify("Progress reset.")}if(a==="complete"){const q=game.quests.find(x=>x.id===id);if(q&&q.status!=="completed"){q.status="completed";q.completedAt=today();game.completedCount++;award(XP[q.difficulty]||10);save();notify(`Quest complete · +${XP[q.difficulty]||10} XP`)}}if(a==="edit-quest")openQuest(game.quests.find(x=>x.id===id));if(a==="delete-quest"&&confirm("Delete this quest?")){game.quests=game.quests.filter(x=>x.id!==id);save()}if(a==="toggle-habit"){const h=game.habits.find(x=>x.id===id);if(h){h.logs=h.logs||{};h.claims=h.claims||[];const key=`${id}:${today()}`;h.logs[today()]=!h.logs[today()];if(h.logs[today()]&&!h.claims.includes(key)){h.claims.push(key);award(10)}save();notify(h.logs[today()]?"Habit checked in · +10 XP":"Check-in removed")}}if(a==="edit-habit")openHabit(game.habits.find(x=>x.id===id));if(a==="delete-habit"&&confirm("Delete this habit?")){game.habits=game.habits.filter(x=>x.id!==id);save()}if(a==="challenge"&&game.quests.filter(q=>q.completedAt===today()).length>=3&&game.claimedChallenge!==today()){game.claimedChallenge=today();award(50);save();notify("Daily challenge cleared · +50 XP")}if(a==="reward"){const qs=dailyQuests(),done=qs.filter(q=>q.status==="completed").length+game.habits.filter(h=>h.logs?.[today()]).length;if(qs.length+game.habits.length>0&&done===qs.length+game.habits.length&&game.claimedReward!==today()){game.claimedReward=today();award(25);save();notify("Daily reward claimed · +25 XP")}}});
+$("quest-form").addEventListener("change",e=>{if(e.target.name==="difficulty")$("quest-reward").textContent=`Completing this quest earns ${XP[e.target.value]} XP.`});
+$("quest-form").addEventListener("submit",e=>{e.preventDefault();const f=e.currentTarget,data=new FormData(f),q={title:data.get("title").trim(),category:data.get("category"),difficulty:data.get("difficulty"),dueDate:data.get("dueDate"),status:"active"};if(editingQuest){Object.assign(game.quests.find(x=>x.id===editingQuest),q)}else{game.quests.unshift({id:uid(),...q})}editingQuest=null;$("quest-dialog").close();save();notify("Quest saved.")});
+$("habit-form").addEventListener("submit",e=>{e.preventDefault();const f=e.currentTarget,data=new FormData(f),h={name:data.get("name").trim(),icon:data.get("icon")};if(editingHabit){Object.assign(game.habits.find(x=>x.id===editingHabit),h)}else{game.habits.push({id:uid(),...h,logs:{},claims:[]})}editingHabit=null;$("habit-dialog").close();save();notify("Habit saved.")});
+$("settings-form").addEventListener("submit",e=>{e.preventDefault();const f=e.currentTarget;game.profile.name=f.elements.profileName.value.trim()||"Adventurer";game.profile.title=f.elements.profileTitle.value.trim()||"New Journey";game.profile.avatar=f.elements.avatar.value;game.sound=f.elements.sound.checked;prefs.palette=f.elements.palette.value;prefs.font=f.elements.font.value;prefs.neon=f.elements.neon.checked;prefs.white=f.elements.white.checked;prefs.pop=f.elements.pop.checked;if(prefs.neon)prefs.white=false;if(prefs.white)prefs.neon=false;$("settings-dialog").close();save();notify("Settings saved.")});
+$("quest-search").addEventListener("input",render);$("quest-filter").addEventListener("change",render);
+document.addEventListener("keydown",e=>{if(e.key==="/"&&!["INPUT","TEXTAREA","SELECT"].includes(document.activeElement.tagName)){e.preventDefault();currentView="quests";render();$("quest-search").focus()}if(e.key==="Escape")$("sidebar").classList.remove("open")});
+render();
+</script>
+</body>
+</html>
